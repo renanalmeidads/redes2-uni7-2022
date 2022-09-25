@@ -10,9 +10,6 @@ import java.util.*;
 
 public class Switch extends Equipment implements ProviderEquipment {
     private Map<Mac, Port> forwardingTable;
-
-    private Map<Ip,Package> mapPack;
-
     private Set<Ip> ipsSet;
     private final int MAX_EQUIPMENTS_CONNECTED = 254;
 
@@ -46,8 +43,6 @@ public class Switch extends Equipment implements ProviderEquipment {
         ipsSet.add(getIpAddress());
 
         forwardingTable = new HashMap<>();
-
-        mapPack = new HashMap<>();
     }
 
     public Port getFromForwardingTable(Mac mac) {
