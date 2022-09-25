@@ -90,15 +90,11 @@ public class Switch extends Equipment implements ProviderEquipment {
             if (link.getEquipment1() != null && !(link.getEquipment1() instanceof ProviderEquipment)) {
                 link.getEquipment1().setIpAddress(getNextIp());
                 System.out.println(link.getEquipment1().getMacAddress() + " - IP " + link.getEquipment1().getIpAddress().toString() + " atribuído do equipamento.");
-
-                //addToForwardingTable(link.getEquipment1().getMacAddress(), getConnections().get(link));
             }
 
             if (link.getEquipment2() != null && !(link.getEquipment2() instanceof ProviderEquipment)) {
                 link.getEquipment2().setIpAddress(getNextIp());
                 System.out.println(link.getEquipment2().getMacAddress() + " - IP " + link.getEquipment2().getIpAddress().toString() + " atribuído do equipamento.");
-
-                //addToForwardingTable(link.getEquipment2().getMacAddress(), getConnections().get(link));
             }
         }
     }
