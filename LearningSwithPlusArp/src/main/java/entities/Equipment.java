@@ -159,7 +159,7 @@ public abstract class Equipment {
             throw new Exception(this.getMacAddress() + " - O equipamento não tem mais portas disponíveis.");
         }
 
-        if(link.getOtherEquipment(this) instanceof ProviderEquipment)
+        if(!(this instanceof ProviderEquipment) && link.getOtherEquipment(this) instanceof ProviderEquipment)
         {
             this.setIpAddress(((ProviderEquipment) link.getOtherEquipment(this)).getNextIp());
         }
