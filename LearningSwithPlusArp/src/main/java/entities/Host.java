@@ -18,11 +18,6 @@ public class Host extends Equipment {
     }
 
     @Override
-    public void addToForwardingTable(Mac mac, Port port) {
-
-    }
-
-    @Override
     public void forwardPackage(Package pack, Link link) throws Exception {
 
         if(pack instanceof EthernetPackage)

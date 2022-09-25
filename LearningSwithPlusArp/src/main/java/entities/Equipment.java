@@ -348,8 +348,6 @@ public abstract class Equipment {
         }
     }
 
-    public abstract void addToForwardingTable(Mac mac, Port port);
-
     public abstract void forwardPackage(Package pack, Link link) throws Exception;
 
     @Override
