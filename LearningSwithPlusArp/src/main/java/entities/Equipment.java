@@ -334,9 +334,14 @@ public abstract class Equipment {
 
                 Equipment eq = link.getOtherEquipment(this);
 
-                if(eq != null && eq.getMacAddress() != ethernetPackage.getMacSource())
+                if(eq != null) {
+                    if (eq.getMacAddress() != ethernetPackage.getMacSource()) {
+                        link.send(this, pack);
+                    }
+                }
+                else
                 {
-                    link.send(this, pack);
+                    System.out.println(this.getMacAddress() + " - Link - " + link.getId() + " não conectado à outro equipamento.");
                 }
             }
             else {

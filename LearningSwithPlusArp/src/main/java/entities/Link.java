@@ -77,11 +77,6 @@ public class Link {
             eq = equipment1;
         }
 
-        if(eq == null)
-        {
-            System.out.println("Link - " + this.getId() + " não conectado à outro equipamento." );
-        }
-
         return eq;
     }
 
