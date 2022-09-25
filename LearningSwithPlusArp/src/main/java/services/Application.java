@@ -61,11 +61,11 @@ public class Application {
             h9.setIpAddress(new Ip("192.168.0.1"));
             h10.setIpAddress(new Ip("192.168.0.2"));
 
-            Package pack = PackageFactory.getEthernetPackage(h, h8, l1, "Teste de envio pack");
+            Package pack = PackageFactory.getTcpPackage(h, h8, l1, "Teste de envio pack");
 
             h.send(pack);
 
-            Package pack2 = PackageFactory.getEthernetPackage(h9, h10, l11, "Teste de envio pack2");
+            Package pack2 = PackageFactory.getTcpPackage(h9, h10, l11, "Teste de envio pack2");
 
             h9.send(pack2);
 

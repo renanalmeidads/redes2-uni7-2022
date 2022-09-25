@@ -11,7 +11,7 @@ import entities.tcp.TcpPackage;
 
 public class PackageFactory {
 
-    public static Package getEthernetPackage(Equipment eq1, Equipment eq2, Link link, String payload)
+    public static Package getTcpPackage(Equipment eq1, Equipment eq2, Link link, String payload)
     {
         TcpPackage tcpPackage = new TcpPackage(eq1.getConnections().get(link), null, payload);
         IpPackage ipPackage = new IpPackage(eq1.getIpAddress(), eq2.getIpAddress(), tcpPackage);
