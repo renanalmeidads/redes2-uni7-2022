@@ -216,7 +216,9 @@ public abstract class Equipment {
                         {
                             TcpPackage tcpPack = (TcpPackage) ipPack.getType();
 
-                            link.send(this, pack);
+                            Link l = getLinkConnectedByPort(tcpPack.getPortSource());
+
+                            l.send(this, pack);
                         }
                     } else {
                         addPackStack((EthernetPackage) pack);
@@ -226,9 +228,9 @@ public abstract class Equipment {
                 } else if (pack.getType() instanceof ArpPackage) {
                     ArpPackage arpPackage = (ArpPackage) pack.getType();
 
-                    if(arpPackage.isArpRequest()) {
-                        addIpMacMap(arpPackage.getIpSource(), arpPackage.getMacSource());
+                    addIpMacMap(arpPackage.getIpSource(), arpPackage.getMacSource());
 
+                    if(arpPackage.isArpRequest()) {
                         arp(ethernetPackage, link);
                     }
                     else if(arpPackage.isArpResponse())

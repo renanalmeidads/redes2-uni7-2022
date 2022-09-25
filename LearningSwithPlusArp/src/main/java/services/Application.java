@@ -16,9 +16,9 @@ public class Application {
         var h6 = new Host(new Mac("2D-3F-44-FE-15-91"));
         var h7 = new Host(new Mac("F0-E4-A2-8E-86-BB"));
         var h8 = new Host(new Mac("F3-22-F2-4A-1F-95"));
-        var s2 = new Switch(new Mac("C4-FF-86-DD-ED-1E"), new Ip("192.168.0.2"));
         var s = new Switch(new Mac("06-0A-83-04-BA-E6"), new Ip("192.168.0.1"));
-        var s3 = new Switch(new Mac("A9-5D-A2-84-2B-4D"), new Ip("192.168.0.3"));
+        var s2 = new Switch(new Mac("C4-FF-86-DD-ED-1E"), new Ip("10.0.0.1"));
+        var s3 = new Switch(new Mac("A9-5D-A2-84-2B-4D"), new Ip("123.0.0.1"));
         var l1 = new Link();
         var l2 = new Link();
         var l3 = new Link();
@@ -61,13 +61,17 @@ public class Application {
             h9.setIpAddress(new Ip("192.168.0.1"));
             h10.setIpAddress(new Ip("192.168.0.2"));
 
-            Package pack = PackageFactory.getTcpPackage(h, h8, l1, "Teste de envio pack");
+            Package pack = PackageFactory.getTcpPackage(h, h3, l1, "Teste de envio pack");
 
             h.send(pack);
 
-            Package pack2 = PackageFactory.getTcpPackage(h9, h10, l11, "Teste de envio pack2");
+            Package pack2 = PackageFactory.getTcpPackage(h6, h2, l7, "Teste de envio pack2");
 
-            h9.send(pack2);
+            h6.send(pack2);
+
+            Package pack3 = PackageFactory.getTcpPackage(h, h8, l1, "Teste de envio pack3");
+
+            h.send(pack3);
 
         } catch (Exception e) {
             throw new RuntimeException(e);
