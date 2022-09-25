@@ -256,9 +256,9 @@ public abstract class Equipment {
 
                 if(arpPackage.getIpDestination() != null)
                 {
-                    if(arpPackage.isArpRequest()) {
+                    addIpMacMap(arpPackage.getIpSource(), arpPackage.getMacSource());
 
-                        addIpMacMap(arpPackage.getIpSource(), arpPackage.getMacSource());
+                    if(arpPackage.isArpRequest()) {
 
                         if (getIpAddress() == arpPackage.getIpDestination()) {
                             System.out.println(getMacAddress() + " - " + getIpAddress() + " - ARP aceito.");
@@ -274,8 +274,6 @@ public abstract class Equipment {
                     }
                     else if(arpPackage.isArpResponse())
                     {
-                        addIpMacMap(arpPackage.getIpSource(), arpPackage.getMacSource());
-
                         forwardPackage(pack, link);
                     }
                 }
