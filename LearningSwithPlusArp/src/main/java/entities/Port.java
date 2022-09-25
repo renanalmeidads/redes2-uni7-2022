@@ -10,12 +10,12 @@ public class Port {
         this.id = id;
     }
 
-    public boolean Connect()
+    public boolean connect()
     {
         return Connected = true;
     }
 
-    public boolean Disconnect()
+    public boolean disconnect()
     {
         return Connected = false;
     }

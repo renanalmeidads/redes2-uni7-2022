@@ -1,5 +1,8 @@
 package entities;
 
+import entities.arp.ArpPackage;
+import entities.ethernet.EthernetPackage;
+
 import java.util.ArrayList;
 
 public class Host extends Equipment {
@@ -15,58 +18,43 @@ public class Host extends Equipment {
     }
 
     @Override
-    public void send(Package pack) throws Exception {
+    public void addToForwardingTable(Mac mac, Port port) {
 
-        if(pack != null)
-        {
-            for(Port port : getPorts())
-            {
-                if(port.isConnected())
-                {
-                    Link link = getLinkConnectedByPort(port);
-
-                    link.send(this, pack);
-                }
-                else {
-                    System.out.println("Porta " + port.getId() + " desconectada");
-                }
-            }
-        }
-        else
-        {
-            throw new Exception(this.getMacAddress() + " - Package inválido.");
-        }
     }
 
     @Override
-    public void receive(Package pack) throws Exception {
+    public void forwardPackage(Package pack, Link link) throws Exception {
 
-        if(pack != null)
+        if(pack instanceof EthernetPackage)
         {
-            if(pack instanceof ArpPackage)
+            EthernetPackage ethernetPackage = (EthernetPackage) pack;
+
+            if(pack.getType() instanceof ArpPackage)
             {
-                if(pack.getIpDestino() != null)
+                ArpPackage arpPackage = (ArpPackage) pack.getType();
+
+                if (arpPackage.isArpResponse())
                 {
-                    if(getIpAddress() == pack.getIpDestino()) {
-                        System.out.println(getMacAddress() + " - " + getIpAddress() + " - ARP aceito.");
+                    if(this.getMacAddress() == arpPackage.getMacDestination())
+                    {
+                        System.out.println(getMacAddress() + " - " + getIpAddress() + " - ARP response recebido");
 
-                        ((ArpPackage) pack).setMac(getMacAddress());
+                        EthernetPackage packStack = getPackStack();
 
-                        send(pack);
-                    }
-                    else {
-                        System.out.println(getMacAddress() + " - " + getIpAddress() + " - ARP ignorado.");
+                        packStack.setMacDestination(arpPackage.getMacSource());
+
+                        System.out.println(getMacAddress() + " - " + getIpAddress() + " - Continuando envio do pacote original...");
+
+                        link.send(this, packStack);
                     }
                 }
-                else
+                else if(arpPackage.isArpRequest())
                 {
-                    System.out.println("O IP da requisição ARP está nulo.");
+                    System.out.println(getMacAddress() + " - " + getIpAddress() + " - ARP ignorado.");
                 }
-            }
-            else if(pack instanceof TcpPackage)
-            {
-                System.out.println(getMacAddress() + " - Payload: " + pack.getPayload());
             }
         }
     }
+
+
 }

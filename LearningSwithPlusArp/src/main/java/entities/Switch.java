@@ -1,13 +1,15 @@
 package entities;
 
+import entities.arp.ArpPackage;
+import entities.ethernet.EthernetPackage;
+import factory.PackageFactory;
+
 import javax.management.InstanceNotFoundException;
 import java.nio.file.ProviderNotFoundException;
 import java.util.*;
 
 public class Switch extends Equipment implements ProviderEquipment {
     private Map<Mac, Port> forwardingTable;
-
-    private Map<Ip, Mac> ipMacMap;
 
     private Map<Ip,Package> mapPack;
 
@@ -45,20 +47,26 @@ public class Switch extends Equipment implements ProviderEquipment {
 
         forwardingTable = new HashMap<>();
 
-        ipMacMap = new HashMap<>();
-
         mapPack = new HashMap<>();
     }
 
-    public Map<Mac, Port> getForwardingTable() {
-        return forwardingTable;
+    public Port getFromForwardingTable(Mac mac) {
+
+        Port port = null;
+
+        if(!this.forwardingTable.isEmpty())
+        {
+            port = this.forwardingTable.get(mac);
+        }
+
+        return port;
     }
 
     public void setForwardingTable(Map<Mac, Port> forwardingTable) {
         this.forwardingTable = forwardingTable;
     }
 
-    private void addToForwardingTable(Mac mac, Port port)
+    public void addToForwardingTable(Mac mac, Port port)
     {
         if(mac != null && port != null) {
             if (!this.forwardingTable.containsKey(mac)) {
@@ -83,14 +91,14 @@ public class Switch extends Equipment implements ProviderEquipment {
                 link.getEquipment1().setIpAddress(getNextIp());
                 System.out.println(link.getEquipment1().getMacAddress() + " - IP " + link.getEquipment1().getIpAddress().toString() + " atribuído do equipamento.");
 
-                addToForwardingTable(link.getEquipment1().getMacAddress(), getConnections().get(link));
+                //addToForwardingTable(link.getEquipment1().getMacAddress(), getConnections().get(link));
             }
 
             if (link.getEquipment2() != null && !(link.getEquipment2() instanceof ProviderEquipment)) {
                 link.getEquipment2().setIpAddress(getNextIp());
                 System.out.println(link.getEquipment2().getMacAddress() + " - IP " + link.getEquipment2().getIpAddress().toString() + " atribuído do equipamento.");
 
-                addToForwardingTable(link.getEquipment2().getMacAddress(), getConnections().get(link));
+                //addToForwardingTable(link.getEquipment2().getMacAddress(), getConnections().get(link));
             }
         }
     }
@@ -111,6 +119,54 @@ public class Switch extends Equipment implements ProviderEquipment {
             removeIpEquipment(eq);
 
             removeFromForwardingTable(eq.getMacAddress());
+        }
+    }
+
+    @Override
+    public void forwardPackage(Package pack, Link link) throws Exception {
+
+        if(pack instanceof EthernetPackage)
+        {
+            EthernetPackage ethernetPackage = (EthernetPackage) pack;
+
+            ethernetPackage.setMacSource(link.getOtherEquipment(this).getMacAddress());
+
+            if(pack.getType() instanceof ArpPackage)
+            {
+                ArpPackage arpPackage = (ArpPackage) pack.getType();
+
+                addToForwardingTable(arpPackage.getMacSource(), getConnections().get(link));
+
+                if(arpPackage.isArpRequest())
+                {
+                    this.arp(ethernetPackage, link);
+                }
+                else if (arpPackage.isArpResponse())
+                {
+                    if(this.getMacAddress() == arpPackage.getMacDestination())
+                    {
+                        System.out.println(getMacAddress() + " - " + getIpAddress() + " - ARP response recebido");
+
+                        EthernetPackage packStack = getPackStack();
+
+                        this.send(packStack, link);
+                    }
+                    else
+                    {
+                        System.out.println(getMacAddress() + " - " + getIpAddress() + " - ARP ignorado. Encaminhando...");
+
+                        Port port = getFromForwardingTable(arpPackage.getMacDestination());
+
+                        getLinkConnectedByPort(port).send(this, ethernetPackage);
+                    }
+                }
+            }
+            else
+            {
+                Port port = getFromForwardingTable(ethernetPackage.getMacDestination());
+
+                getLinkConnectedByPort(port).send(this, ethernetPackage);
+            }
         }
     }
 
@@ -179,80 +235,6 @@ public class Switch extends Equipment implements ProviderEquipment {
         for(Ip ip : ipsNotUsed)
         {
             ipsSet.remove(ip);
-        }
-    }
-
-    @Override
-    public void receive(Package pack) throws Exception {
-
-        if(pack != null)
-        {
-            if(pack instanceof ArpPackage)
-            {
-                if(pack.getIpDestino() != null && ((ArpPackage) pack).getMac() != null)
-                {
-                    ipMacMap.put(pack.getIpDestino(), ((ArpPackage) pack).getMac());
-
-                    receive(mapPack.get(pack.getIpDestino()));
-                }
-            }
-            else if (pack instanceof TcpPackage) {
-
-                if (pack.getIpDestino() != null) {
-
-                    if(!mapPack.containsKey(pack.getIpDestino())) {
-                        mapPack.put(pack.getIpDestino(), pack);
-                    }
-
-                    if (ipMacMap.containsKey(pack.getIpDestino())) {
-
-                        Package sendPackage = mapPack.get(pack.getIpDestino());
-
-                        send(sendPackage, ipMacMap.get(pack.getIpDestino()));
-
-                        mapPack.remove(pack.getIpDestino());
-                    } else {
-                        ARP(pack.getIpDestino());
-                    }
-                } else {
-                    throw new Exception("O IP de destino do package deve ser informado.");
-                }
-            }
-        }
-    }
-
-    private void send(Package pack, Mac mac) throws Exception {
-
-        if(mac != null) {
-
-            Port port = forwardingTable.get(mac);
-
-            if(port != null) {
-                Link link = getLinkConnectedByPort(port);
-
-                link.send(this, pack);
-            }
-            else
-            {
-                System.out.println("Nenhuma porta encontrada para o mac informado.");
-            }
-        }
-    }
-
-    private void ARP(Ip ip) throws Exception {
-
-        ArpPackage pack = new ArpPackage();
-
-        pack.setIpDestino(ip);
-
-        Broadcast(pack);
-    }
-
-    private void Broadcast(ArpPackage arpPack) throws Exception {
-
-        for(Link link : getConnections().keySet())
-        {
-            link.send(this, arpPack);
         }
     }
 }

@@ -4,30 +4,22 @@ import java.util.Random;
 
 public class Package {
     private int id;
-    private Ip ipDestino;
-    private String payload;
+
+    private Package type;
 
     public Package() {
-        this.id = new Random().nextInt();
-    }
-
-    public String getPayload() {
-        return payload;
-    }
-
-    public void setPayload(String payload) {
-        this.payload = payload;
+        this.id = new Random().nextInt() & Integer.MAX_VALUE;
     }
 
     public int getId() {
         return id;
     }
 
-    public Ip getIpDestino() {
-        return ipDestino;
+    public Package getType() {
+        return type;
     }
 
-    public void setIpDestino(Ip ipDestino) {
-        this.ipDestino = ipDestino;
+    public void setType(Package type) {
+        this.type = type;
     }
 }
