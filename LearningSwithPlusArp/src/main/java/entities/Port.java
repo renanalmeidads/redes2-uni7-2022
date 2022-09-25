@@ -4,7 +4,7 @@ public class Port {
 
     private int id;
 
-    private boolean Connected = false;
+    private boolean connected = false;
 
     public Port(int id) {
         this.id = id;
@@ -12,15 +12,15 @@ public class Port {
 
     public boolean connect()
     {
-        return Connected = true;
+        return connected = true;
     }
 
     public boolean disconnect()
     {
-        return Connected = false;
+        return connected = false;
     }
 
-    public boolean isConnected() { return Connected; }
+    public boolean isConnected() { return connected; }
 
     public int getId() {
         return id;
