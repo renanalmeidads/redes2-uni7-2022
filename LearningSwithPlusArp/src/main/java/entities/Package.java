@@ -22,4 +22,12 @@ public class Package {
     public void setType(Package type) {
         this.type = type;
     }
+
+    @Override
+    public String toString() {
+        return "Package{" +
+                "id=" + id +
+                ", type=" + type +
+                '}';
+    }
 }

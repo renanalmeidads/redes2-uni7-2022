@@ -42,6 +42,9 @@ public class Host extends Equipment {
 
                         link.send(this, packStack);
                     }
+                    else {
+                        this.arp(ethernetPackage, link);
+                    }
                 }
                 else if(arpPackage.isArpRequest())
                 {

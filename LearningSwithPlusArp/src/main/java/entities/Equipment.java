@@ -1,6 +1,7 @@
 package entities;
 
 import entities.arp.ArpPackage;
+import entities.arp.ArpPackageResponse;
 import entities.ethernet.EthernetPackage;
 import entities.ip.IpPackage;
 import entities.tcp.TcpPackage;
@@ -265,11 +266,15 @@ public abstract class Equipment {
                         if (getIpAddress() == arpPackage.getIpDestination()) {
                             System.out.println(getMacAddress() + " - " + getIpAddress() + " - ARP aceito.");
 
-                            EthernetPackage arpPackageResponse = (EthernetPackage) PackageFactory.getArpResponsePackage(this, arpPackage.getIpSource(), arpPackage.getMacSource());
+                            System.out.println(ethernetPackage);
+
+                            EthernetPackage arpPackageResponse = (EthernetPackage) PackageFactory.getArpResponsePackageBroadcast(this, arpPackage.getIpSource(), arpPackage.getMacSource());
 
                             System.out.println(getMacAddress() + " - " + getIpAddress() + " - Enviando ARP response...");
 
-                            link.send(this, arpPackageResponse);
+                            System.out.println(arpPackageResponse);
+
+                            arp(arpPackageResponse, link);
                         } else {
                             forwardPackage(pack, link);
                         }
@@ -316,36 +321,41 @@ public abstract class Equipment {
 
         if(pack.isBroadcast())
         {
-            broadcast(pack);
+            if(pack.getType() instanceof ArpPackageResponse)
+            {
+                ArpPackageResponse arpResponse = (ArpPackageResponse) pack.getType();
+
+                if(arpResponse.getMacSource() == getMacAddress())
+                {
+                    link = null;
+                }
+            }
+
+            broadcast(pack, link);
         }
         else
         {
-            this.send(pack, link);
+            link.send(this, pack);
         }
     }
 
-    public void broadcast(Package pack) throws Exception {
+    public void broadcast(Package pack, Link originLink) throws Exception {
 
         for(Link link : getConnections().keySet())
         {
-            if(pack instanceof EthernetPackage)
-            {
-                EthernetPackage ethernetPackage = (EthernetPackage) pack;
+            if(link != originLink) {
+                if (pack instanceof EthernetPackage) {
 
-                Equipment eq = link.getOtherEquipment(this);
+                    Equipment eq = link.getOtherEquipment(this);
 
-                if(eq != null) {
-                    if (eq.getMacAddress() != ethernetPackage.getMacSource()) {
+                    if (eq != null) {
                         link.send(this, pack);
+                    } else {
+                        System.out.println(this.getMacAddress() + " - Link - " + link.getId() + " não conectado à outro equipamento.");
                     }
+                } else {
+                    link.send(this, pack);
                 }
-                else
-                {
-                    System.out.println(this.getMacAddress() + " - Link - " + link.getId() + " não conectado à outro equipamento.");
-                }
-            }
-            else {
-                link.send(this, pack);
             }
         }
     }

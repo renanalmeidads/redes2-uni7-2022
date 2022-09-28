@@ -10,4 +10,15 @@ public class ArpPackageRequest extends ArpPackage {
 
         setOpCodeRequest();
     }
+
+    @Override
+    public String toString() {
+        return "ArpPackageRequest{" +
+                "ipSource=" + this.getIpSource() +
+                ", macSource=" + this.getMacSource() +
+                ", ipDestination=" + this.getIpDestination() +
+                ", macDestination=" + this.getMacDestination() +
+                ", opCode=" + this.getOpCode() +
+                '}';
+    }
 }

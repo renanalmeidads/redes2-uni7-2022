@@ -28,4 +28,14 @@ public class TcpPackage extends Package {
     public String getPayload() {
         return payload;
     }
+
+    @Override
+    public String toString() {
+        return "TcpPackage{" +
+                "portSource=" + portSource +
+                ", portDestination=" + portDestination +
+                ", payload='" + payload + '\'' +
+                ", type=" + this.getType() +
+                '}';
+    }
 }

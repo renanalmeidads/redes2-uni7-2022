@@ -47,4 +47,13 @@ public class EthernetPackage extends Package {
     public void setMacDestination(Mac macDestination) {
         this.macDestination = macDestination;
     }
+
+    @Override
+    public String toString() {
+        return "EthernetPackage{" +
+                "macDestination=" + macDestination +
+                ", macSource=" + macSource +
+                ", type=" + this.getType() +
+                '}';
+    }
 }

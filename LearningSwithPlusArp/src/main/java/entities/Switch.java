@@ -120,8 +120,6 @@ public class Switch extends Equipment implements ProviderEquipment {
         {
             EthernetPackage ethernetPackage = (EthernetPackage) pack;
 
-            ethernetPackage.setMacSource(link.getOtherEquipment(this).getMacAddress());
-
             if(pack.getType() instanceof ArpPackage)
             {
                 ArpPackage arpPackage = (ArpPackage) pack.getType();
@@ -146,9 +144,15 @@ public class Switch extends Equipment implements ProviderEquipment {
                     {
                         System.out.println(getMacAddress() + " - " + getIpAddress() + " - ARP ignorado. Encaminhando...");
 
-                        Port port = getFromForwardingTable(arpPackage.getMacDestination());
+                        if(ethernetPackage.isBroadcast()) {
+                            this.arp(ethernetPackage, link);
+                        }
+                        else
+                        {
+                            Port port = getFromForwardingTable(arpPackage.getMacDestination());
 
-                        getLinkConnectedByPort(port).send(this, ethernetPackage);
+                            this.arp(ethernetPackage, getLinkConnectedByPort(port));
+                        }
                     }
                 }
             }

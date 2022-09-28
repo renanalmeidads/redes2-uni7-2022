@@ -49,6 +49,10 @@ public class ArpPackage extends Package {
         return this.opCode == 2;
     }
 
+    protected int getOpCode() {
+        return opCode;
+    }
+
     private void setMacDestinationZeros()
     {
         this.macDestination = MAC_ZEROES;
@@ -84,5 +88,16 @@ public class ArpPackage extends Package {
 
     public void setMacDestination(Mac macDestination) {
         this.macDestination = macDestination;
+    }
+
+    @Override
+    public String toString() {
+        return "ArpPackage{" +
+                "ipSource=" + ipSource +
+                ", macSource=" + macSource +
+                ", ipDestination=" + ipDestination +
+                ", macDestination=" + macDestination +
+                ", opCode=" + opCode +
+                '}';
     }
 }

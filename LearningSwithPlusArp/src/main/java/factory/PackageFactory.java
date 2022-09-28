@@ -36,10 +36,18 @@ public class PackageFactory {
         return ethernetPackage;
     }
 
-    public static Package getArpResponsePackage(Equipment eq1, Ip ip, Mac macDestination)
+    public static Package getArpResponsePackageUnicast(Equipment eq1, Ip ip, Mac macDestination)
     {
         ArpPackage arpPackage = new ArpPackageResponse(eq1.getIpAddress(), eq1.getMacAddress(), ip, macDestination);
         EthernetPackage ethernetPackage = new EthernetPackage(eq1.getMacAddress(), macDestination, arpPackage);
+
+        return ethernetPackage;
+    }
+
+    public static Package getArpResponsePackageBroadcast(Equipment eq1, Ip ip, Mac macDestination)
+    {
+        ArpPackage arpPackage = new ArpPackageResponse(eq1.getIpAddress(), eq1.getMacAddress(), ip, macDestination);
+        EthernetPackage ethernetPackage = new EthernetPackage(eq1.getMacAddress(), null, arpPackage);
 
         return ethernetPackage;
     }

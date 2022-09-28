@@ -22,4 +22,13 @@ public class IpPackage extends Package {
     public Ip getIpDestination() {
         return ipDestination;
     }
+
+    @Override
+    public String toString() {
+        return "IpPackage{" +
+                "ipSource=" + ipSource +
+                ", ipDestination=" + ipDestination +
+                ", type=" + this.getType() +
+                '}';
+    }
 }

@@ -81,6 +81,10 @@ public class Application {
 
             h5.send(pack5);
 
+            Package pack6 = PackageFactory.getTcpPackage(h9, h10, l11, "Teste de envio pack6");
+
+            h9.send(pack6);
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
