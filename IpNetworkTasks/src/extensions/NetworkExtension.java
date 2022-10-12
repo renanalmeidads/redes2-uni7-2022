@@ -58,6 +58,13 @@ public class NetworkExtension {
                     owner = currentOwner;
                     distinctCount = currentCount;
                 }
+                else if(currentCount == distinctCount)
+                {
+                    if(owner.getMask() < currentOwner.getMask())
+                    {
+                        owner = currentOwner;
+                    }
+                }
             }
         }
 

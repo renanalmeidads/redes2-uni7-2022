@@ -18,10 +18,15 @@ public class Main {
         boolean ipBelongs = n.ipBelongsToNetwork(new Ip("192.168.45.1"));
 
         List<Network> networks = new ArrayList<>();
-        networks.add(new Network(new Ip("192.168.47.33"), 20));
-        networks.add(new Network(new Ip("192.168.45.33"), 24));
+        networks.add(new Network(new Ip("192.168.46.33"), 24));
+        networks.add(new Network(new Ip("192.168.45.33"), 26));
+        networks.add(new Network(new Ip("192.168.0.33"), 24));
+        networks.add(new Network(new Ip("192.168.40.33"), 24));
         networks.add(new Network(new Ip("192.168.45.33"), 25));
+        networks.add(new Network(new Ip("192.168.45.33"), 24));
 
-        Network ownerNetwork = NetworkExtension.ipNetworkOwner(networks, new Ip("192.168.45.1"));
+        Network ownerNetwork = NetworkExtension.ipNetworkOwner(networks, new Ip("192.168.45.255"));
+
+        System.out.println("FIM");
     }
 }
