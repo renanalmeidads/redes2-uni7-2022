@@ -1,5 +1,6 @@
 package entities;
 
+import java.math.BigInteger;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,10 @@ public class Network {
         {
             this.mask = mask;
         }
+    }
+
+    public int getMask() {
+        return mask;
     }
 
     public Ip getIp() {
@@ -68,36 +73,48 @@ public class Network {
         {
             int ipRangesAmount = (int)Math.ceil(Math.log(subnetsAmount) / Math.log(2));
 
-            if((ip.getMaxBits() - this.mask) < (ip.getBitsBlockAmount() + ipRangesAmount))
+            if((ip.getMaxBits() - getMask()) < (ip.getBitsBlockAmount() + ipRangesAmount))
             {
                 throw new InvalidParameterException("The network cannot provide " + subnetsAmount + " ip ranges.");
             }
+
+            String maskBits = String.format("%-" + this.ip.getMaxBits() + "s", "1".repeat(getMask())).replace(' ', '0');
+
+            String ipPartsBits = Long.toBinaryString(Long.parseLong(this.ip.getPartsBits(4), 2) & Long.parseLong(maskBits, 2));
+
+            long subnetIp = Long.parseLong(ipPartsBits, 2);
 
             for(int i = 0; i < Math.pow(2, ipRangesAmount); i++)
             {
                 Ip ip = new Ip();
 
-                String ipPartsBits = this.ip.getPartsBits(3);
+                int defaultSum = i > 0 ? ip.getMaxBlockValue() + 1 : 0;
 
-                int subnetIp = Integer.parseInt(ipPartsBits, 2) + i;
+                subnetIp = subnetIp + defaultSum;
 
-                ip.setPartsByBits(Integer.toBinaryString(subnetIp));
+                ip.setPartsByBits(Long.toBinaryString(subnetIp));
 
-                Ip startIp = ip;
-
-                startIp.setPart4(this.ip.getPart4());
-
-                Network network = new Network(startIp, 24);
+                Network network = new Network(ip, 24);
 
                 Ip lastIp = network.getLastIp();
 
-                IpRange<Ip, Ip> ipRange = new IpRange<>(startIp, lastIp);
+                IpRange<Ip, Ip> ipRange = new IpRange<>(ip, lastIp);
 
                 ipRanges.add(ipRange);
             }
         }
 
         return ipRanges;
+    }
+
+    public boolean ipBelongsToNetwork(Ip ip)
+    {
+        String maskBits = String.format("%-" + this.ip.getMaxBits() + "s", "1".repeat(getMask())).replace(' ', '0');
+
+        String networkPartsBits = Long.toBinaryString(Long.parseLong(this.ip.getPartsBits(4), 2) & Long.parseLong(maskBits, 2));
+        String ipPartsBits = Long.toBinaryString(Long.parseLong(ip.getPartsBits(4), 2) & Long.parseLong(maskBits, 2));
+
+        return networkPartsBits.equals(ipPartsBits);
     }
 
     @Override

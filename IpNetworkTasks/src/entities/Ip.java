@@ -19,6 +19,8 @@ public class Ip {
 
     private final int BITS_BLOCK_AMOUNT = 8;
 
+    private final int MAX_BLOCK_VALUE = 255;
+
     public Ip() { }
 
     public Ip(String ip) {
@@ -91,6 +93,10 @@ public class Ip {
         return MAX_BITS / BITS_BLOCK_AMOUNT;
     }
 
+    public int getMaxBlockValue()
+    {
+        return MAX_BLOCK_VALUE;
+    }
     public void setPosition(int position, int value)
     {
         switch (position) {
