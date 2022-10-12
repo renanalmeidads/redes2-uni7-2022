@@ -1,6 +1,5 @@
 package entities;
 
-import java.math.BigInteger;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +11,6 @@ public class Network {
     private int mask;
 
     private final char SEPARATOR = '/';
-
-    private List<Network> subNetworks;
 
     public Network(Ip ip, int mask)
     {
